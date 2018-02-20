@@ -27,6 +27,7 @@ class Dictionary(object):
         words = []
         while True:
             line = file.readline()
+            line = line.lower()
             if not line:
                 break
             pattern = '[a-zA-Z]+'

@@ -6,12 +6,10 @@
 import hashlib
 import json
 import os.path
+import pandas as pd
 import re
 import time
-import urllib
-import urllib2
-
-import pandas as pd
+import urllib.request
 
 
 class Dictionary(object):
@@ -66,7 +64,7 @@ class Dictionary(object):
         for word in words:
             meaning = self.translate(word)
             meanings.append(meaning)
-        return zip(words, meanings)
+        return list(zip(words, meanings))
 
     def to_dic(self, words):
         df = pd.DataFrame(words, columns=self.columns)
@@ -74,9 +72,9 @@ class Dictionary(object):
 
     def translate(self, input):
         data = self.form_data(input)
-        data = urllib.urlencode(data)
-        request = urllib2.Request(self.url, data=data)
-        response = urllib2.urlopen(request)
+        data = urllib.parse.urlencode(data).encode(encoding='UTF8')
+        request = urllib.request.Request(self.url)
+        response = urllib.request.urlopen(request, data=data)
         html = response.read()
         target = json.loads(html)
         result = target["translateResult"][0][0]['tgt']
@@ -88,7 +86,7 @@ class Dictionary(object):
         a = "rY0D^0'nM0}g5Mm1z%1G4"
         md5 = hashlib.md5()
         digStr = client + input + salt + a
-        md5.update(digStr)
+        md5.update(digStr.encode("utf8"))
         sign = md5.hexdigest()
 
         data = {}
